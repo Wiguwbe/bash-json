@@ -22,6 +22,6 @@ BUILTINS=(
 )
 
 # where the SO is
-SO_LOCATION="~/bash-json/bash-json.so"
+SO_LOCATION="$HOME/bash-json/bash-json.so"
 
 enable -f ${SO_LOCATION} ${BUILTINS[@]}

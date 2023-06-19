@@ -27,7 +27,7 @@ Some functions may return an array of strings (`jkeys` for example), instead of 
 ## List of builtins
 
 Top level functions:
-- `jload`: loads JSON from stdin, returns a handler;
+- `jload [<file>]`: loads JSON from file or stdin, returns a handler;
 - `jprint <handler>`: prints the value of the handler, in JSON format;
 - `junload`: unload a handler from the values **(not implemented)**;
 - `jhandler <handler>`: test if the value is a handler.

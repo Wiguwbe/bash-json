@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "common.h"
 
@@ -35,7 +36,9 @@ int jload_builtin(WORD_LIST *list)
 		return EX_USAGE;
 	list = loptend;
 	if(list)
-		return EX_USAGE;
+		if(list->next)
+			// 2+ arguments
+			return EX_USAGE;
 
 	void *shm = shmem_init(shm_name);
 	if(!shm)
@@ -44,13 +47,26 @@ int jload_builtin(WORD_LIST *list)
 		return EXECUTION_FAILURE;
 	}
 
-	long object = j_parse_file(shm, stdin, 0);
+	FILE *target = stdin;	// default
+	if(list)
+	{
+		if((target = fopen(list->word->word, "r"))==NULL)
+		{
+			PE("failed to open file: %s", strerror(errno));
+			return EXECUTION_FAILURE;
+		}
+	}
+
+	long object = j_parse_file(shm, target, 0);
 	if(object<0)
 	{
 		shmem_fini(shm);
 		PE("failed to load JSON");
 		return EXECUTION_FAILURE;
 	}
+
+	if(target!=stdin)
+		fclose(target);
 
 	print_handler(shm, object);
 
